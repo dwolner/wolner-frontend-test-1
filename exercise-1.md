@@ -6,14 +6,14 @@ The first step in building a new consumer-facing Web Component is to use the HTM
 
 ##### The objectives are:
 
-- Create a web application in a private repository called `<lastname>-backend-1`.
+- Create a web application in a private repository called `<lastname>-frontend-1`.
 - Create an index page which has a single Web Component called `array-credit-lock`.
 - Use the HTML content in the `exercise-1_page.html` file in this repo to develop the Web Component in vanilla javascript.
 - Your goal is to make the "lock history" table functional with real data.
 - You will find the JSON data for this table inside the `exercise-1_data.json` file in this repo. Use a Web Component attribute to define the URL to query for the JSON data. Use an HTTPS call to fetch the content when the Web Component loads to render it. Return an error if the attribute is not provided.
-- Make sure "Show lock history" and "Hide lock history" continue to function correctly.
+- Make sure "Show lock history", "Hide lock history", and "Show All" continue to function correctly.
 - Don't worry about making any other elements on the page dynamic. However, no functionality like expand/collapse should be broken in the conversion process.
-- Extra Points: Create a `Dockerfile` and `docker-compose.yml` that allows us to build and start your project via `docker-compose up -d`. 
+- Extra Credit (not required): Create a `Dockerfile` and `docker-compose.yml` that allows us to build and start your project via `docker-compose up -d`. 
 
 ##### When complete:
 
