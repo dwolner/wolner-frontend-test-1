@@ -6,7 +6,7 @@ We often consume RESTful API's from our partners and vendors to provide these pr
 
 ##### The objectives are:
 
-- Familiarize yourself with our API at https://docs.array.com and specifically the "Credit Report API Flow" guide.
+- Familiarize yourself with our API at https://docs.array.com and specifically the "Credit Report API Flow" guide. 
 - Create a Next.js web application in a private repository called `<lastname>-frontend-2`.
 - Build the necessary React components to: Create a user, retrieve questions, submit answers, and then order a credit report.
 - Create web pages that uses the React components to allow a user to go through the flow.
