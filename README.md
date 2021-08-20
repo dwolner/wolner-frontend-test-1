@@ -1,3 +1,3 @@
 # frontend
 
-Array frontend software engineer onboarding exercises.
+Array frontend software engineer hiring tests.
