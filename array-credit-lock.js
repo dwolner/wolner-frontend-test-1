@@ -20,7 +20,7 @@ class ArrayCreditLock extends HTMLElement {
             if (values[1]) this.tableData = values[1]
             this.appendTableElements()
         })
-        .catch(handleError)
+            .catch(handleError)
     }
 
     connectedCallback() {
@@ -41,7 +41,7 @@ class ArrayCreditLock extends HTMLElement {
 
     appendMainTemplate(html) {
         let template = document.createElement('template')
-            template.innerHTML = html
+        template.innerHTML = html
         this.shadowRoot.appendChild(template.content.cloneNode(true))
         if (this.shadowElement('.history-title')) {
             this.shadowElement('.history-title').onclick = e => {

@@ -4,18 +4,18 @@
   "description": "Array frontend software engineer hiring tests.",
   "main": "index.html",
   "scripts": {
-    "test": "http-server -c-1 && open 'http://127.0.0.1:8080'"
+    "test": "http-server -c-1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/array.com/tests-frontend.git"
+    "url": "git+https://github.com/dwolner/wolner-frontend-test-1.git"
   },
   "author": "Dan Wolner",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/array.com/tests-frontend/issues"
+    "url": "https://github.com/dwolner/wolner-frontend-test-1/issues"
   },
-  "homepage": "https://gitlab.com/array.com/tests-frontend#readme",
+  "homepage": "https://github.com/dwolner/wolner-frontend-test-1.git#readme",
   "dependencies": {
     "http-server": "^13.0.1"
   }
