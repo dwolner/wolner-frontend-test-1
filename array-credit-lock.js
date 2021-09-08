@@ -3,8 +3,10 @@ class ArrayCreditLock extends HTMLElement {
         super()
         // use shadow DOM to isolate component
         this.attachShadow({ mode: 'open' })
+        // setup state variables
         this.showHistoryTable = false
         this.showAllTableElements = false
+        // handle table data url attribute
         this.tableDataUrl = this.getAttribute('tableDataUrl')
         if (!this.tableDataUrl) {
             handleError('no url to fetch table data. Add a tableDataUrl attribute.')
@@ -21,12 +23,6 @@ class ArrayCreditLock extends HTMLElement {
             this.appendTableElements()
         })
             .catch(handleError)
-    }
-
-    connectedCallback() {
-        this.shadowRoot.addEventListener('showAllSelect', e => {
-            this.toggleShowAllTableElements()
-        })
     }
 
     injectDependencies(injections) {
@@ -55,18 +51,16 @@ class ArrayCreditLock extends HTMLElement {
         let toggleCollapsibleElement = this.shadowRoot.querySelectorAll('.collapsible__toggle-handler') || []
         let toggleCollapsibleIconElement = this.shadowRoot.querySelectorAll('.collapsible__open-close-icon') || []
         let elementList = [...toggleCollapsibleElement, ...toggleCollapsibleIconElement]
-        if (elementList && elementList.length) elementList.forEach(this.addCollapsibleEvent)
-    }
-
-    addCollapsibleEvent(element) {
-        element.onclick = e => {
-            let collapsible = element.closest('.collapsible')
-            collapsible.classList.contains('expanded') ? collapsible.classList.remove('expanded') : collapsible.classList.add('expanded')
-        }
+        if (elementList && elementList.length) elementList.forEach(element => {
+            element.onclick = e => {
+                let collapsible = element.closest('.collapsible')
+                collapsible.classList.contains('expanded') ? collapsible.classList.remove('expanded') : collapsible.classList.add('expanded')
+            }
+        })
     }
 
     appendTableElements() {
-        this.filterTableElements()
+        this.updateTableElements()
         if (this.shadowElement('.show-all')) {
             this.shadowElement('.show-all').onclick = e => {
                 this.toggleShowAllTableElements()
@@ -74,13 +68,14 @@ class ArrayCreditLock extends HTMLElement {
         }
     }
 
-    filterTableElements() {
+    updateTableElements() {
+        // remove all table elements
         if (this.shadowElement('.history-external-data')) {
             while (this.shadowElement('.history-external-data').firstChild) {
                 this.shadowElement('.history-external-data').removeChild(this.shadowElement('.history-external-data').firstChild)
             }
         }
-
+        // append filtered table elements
         let tableDataToDisplay = this.showAllTableElements ? this.tableData : this.tableData.slice(0, 5)
         tableDataToDisplay.forEach(obj => {
 
@@ -128,7 +123,7 @@ class ArrayCreditLock extends HTMLElement {
     toggleShowAllTableElements() {
         this.showAllTableElements = !this.showAllTableElements
         if (this.shadowElement('.show-all')) this.shadowElement('.show-all').innerHTML = this.showAllTableElements ? 'Hide' : `Show All (${this.tableData.length})`
-        this.filterTableElements()
+        this.updateTableElements()
     }
 
     shadowElement(className) {
