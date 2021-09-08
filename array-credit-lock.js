@@ -1,18 +1,14 @@
 class ArrayCreditLock extends HTMLElement {
     constructor() {
         super()
-
-        // shadow DOM to isolate component
+        // use shadow DOM to isolate component
         this.attachShadow({ mode: 'open' })
-
         this.showHistoryTable = false
         this.showAllTableElements = false
-
         this.tableDataUrl = this.getAttribute('tableDataUrl')
         if (!this.tableDataUrl) {
             handleError('no url to fetch table data. Add a tableDataUrl attribute.')
         }
-
         // get all necessary data
         Promise.all([
             getData('injections.json', 'json'),
@@ -28,9 +24,7 @@ class ArrayCreditLock extends HTMLElement {
     }
 
     connectedCallback() {
-
-        this.shadowRoot.addEventListener('showAllSelect', function (e) {
-            console.log('showAllSelect')
+        this.shadowRoot.addEventListener('showAllSelect', e => {
             this.toggleShowAllTableElements()
         })
     }
@@ -47,28 +41,21 @@ class ArrayCreditLock extends HTMLElement {
 
     appendMainTemplate(html) {
         let template = document.createElement('template')
-        template.innerHTML = html
+            template.innerHTML = html
         this.shadowRoot.appendChild(template.content.cloneNode(true))
-
         if (this.shadowElement('.history-title')) {
             this.shadowElement('.history-title').onclick = e => {
                 this.toggleShowHistoryTable()
             }
         }
-
         this.initializeCollapsibleSections()
     }
 
     initializeCollapsibleSections() {
-        let toggleCollapsibleElement = this.shadowRoot.querySelectorAll('.collapsible__toggle-handler')
-        if (toggleCollapsibleElement && toggleCollapsibleElement.length) {
-            toggleCollapsibleElement.forEach(this.addCollapsibleEvent)
-        }
-
-        let toggleCollapsibleIconElement = this.shadowRoot.querySelectorAll('.collapsible__open-close-icon')
-        if (toggleCollapsibleIconElement && toggleCollapsibleIconElement.length) {
-            toggleCollapsibleIconElement.forEach(this.addCollapsibleEvent)
-        }
+        let toggleCollapsibleElement = this.shadowRoot.querySelectorAll('.collapsible__toggle-handler') || []
+        let toggleCollapsibleIconElement = this.shadowRoot.querySelectorAll('.collapsible__open-close-icon') || []
+        let elementList = [...toggleCollapsibleElement, ...toggleCollapsibleIconElement]
+        if (elementList && elementList.length) elementList.forEach(this.addCollapsibleEvent)
     }
 
     addCollapsibleEvent(element) {
@@ -128,10 +115,7 @@ class ArrayCreditLock extends HTMLElement {
 
     toggleShowHistoryTable() {
         this.showHistoryTable = !this.showHistoryTable
-        let historyTitle = this.shadowRoot.querySelectorAll('.history-title')[0]
-        if (historyTitle) {
-            historyTitle.innerHTML = !this.showHistoryTable ? 'Hide lock history' : `Show lock history`
-        }
+        if (this.shadowElement('.history-title')) this.shadowElement('.history-title').innerHTML = !this.showHistoryTable ? 'Hide lock history' : `Show lock history`
         if (!this.showHistoryTable) {
             if (this.shadowElement('.show-all')) this.shadowElement('.show-all').classList.remove('hidden')
             if (this.shadowElement('.history-external-data')) this.shadowElement('.history-external-data').classList.remove('hidden')
