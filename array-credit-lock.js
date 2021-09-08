@@ -8,21 +8,27 @@ class ArrayCreditLock extends HTMLElement {
         this.showHistoryTable = false
         this.showAllTableElements = false
 
+        this.tableDataUrl = this.getAttribute('tableDataUrl')
+        if (!this.tableDataUrl) {
+            handleError('no url to fetch table data. Add a tableDataUrl attribute.')
+        }
+
         // get all necessary data
         Promise.all([
             getData('injections.json', 'json'),
-            getData(this.getAttribute('tableDataUrl'), 'json'),
+            getData(this.tableDataUrl, 'json'),
             getData('array-credit-lock.html')]
         ).then((values) => {
-            this.injectDependencies(values[0])
-            this.appendMainTemplate(values[2])
-            this.tableData = values[1]
+            if (values[0]) this.injectDependencies(values[0])
+            if (values[2]) this.appendMainTemplate(values[2])
+            if (values[1]) this.tableData = values[1]
             this.appendTableElements()
         })
-            .catch(handleError)
+        .catch(handleError)
     }
 
     connectedCallback() {
+
         this.shadowRoot.addEventListener('showAllSelect', function (e) {
             console.log('showAllSelect')
             this.toggleShowAllTableElements()
@@ -44,9 +50,8 @@ class ArrayCreditLock extends HTMLElement {
         template.innerHTML = html
         this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-        let historyTitle = this.shadowRoot.querySelectorAll('.history-title')[0]
-        if (historyTitle) {
-            historyTitle.onclick = e => {
+        if (this.shadowElement('.history-title')) {
+            this.shadowElement('.history-title').onclick = e => {
                 this.toggleShowHistoryTable()
             }
         }
@@ -75,25 +80,21 @@ class ArrayCreditLock extends HTMLElement {
 
     appendTableElements() {
         this.filterTableElements()
-
-        let showAllSelector = this.shadowRoot.querySelectorAll('.show-all')[0]
-        if (showAllSelector) {
-            showAllSelector.onclick = e => {
+        if (this.shadowElement('.show-all')) {
+            this.shadowElement('.show-all').onclick = e => {
                 this.toggleShowAllTableElements()
             }
         }
     }
 
     filterTableElements() {
-        let externalDataTable = this.shadowRoot.querySelectorAll('.history-external-data')[0]
-        if (externalDataTable) {
-            while (externalDataTable.firstChild) {
-                externalDataTable.removeChild(externalDataTable.firstChild);
+        if (this.shadowElement('.history-external-data')) {
+            while (this.shadowElement('.history-external-data').firstChild) {
+                this.shadowElement('.history-external-data').removeChild(this.shadowElement('.history-external-data').firstChild)
             }
         }
 
         let tableDataToDisplay = this.showAllTableElements ? this.tableData : this.tableData.slice(0, 5)
-        console.log('tableDataToDisplay: ', tableDataToDisplay)
         tableDataToDisplay.forEach(obj => {
 
             let node = document.createElement('li')
@@ -117,58 +118,54 @@ class ArrayCreditLock extends HTMLElement {
                             </g>
                         </g>
                     </svg>
-                    <span class="lock">${obj.active ? 'Unlocked' : 'Locked'}</span>
+                    <span class="lock">${obj.type === 'cancellation' ? 'Unlocked' : 'Locked'}</span>
                 </div>
             `
 
-            let externalDataTable = this.shadowRoot.querySelectorAll('.history-external-data')[0]
-            if (externalDataTable) externalDataTable.appendChild(node)
+            if (this.shadowElement('.history-external-data')) this.shadowElement('.history-external-data').appendChild(node)
         })
     }
 
     toggleShowHistoryTable() {
         this.showHistoryTable = !this.showHistoryTable
-
         let historyTitle = this.shadowRoot.querySelectorAll('.history-title')[0]
         if (historyTitle) {
             historyTitle.innerHTML = !this.showHistoryTable ? 'Hide lock history' : `Show lock history`
         }
-
         if (!this.showHistoryTable) {
-            let showAllSelector = this.shadowRoot.querySelectorAll('.show-all')[0]
-            if (showAllSelector) showAllSelector.classList.remove('hidden')
-            let externalDataTable = this.shadowRoot.querySelectorAll('.history-external-data')[0]
-            if (externalDataTable) externalDataTable.classList.remove('hidden')
+            if (this.shadowElement('.show-all')) this.shadowElement('.show-all').classList.remove('hidden')
+            if (this.shadowElement('.history-external-data')) this.shadowElement('.history-external-data').classList.remove('hidden')
         } else {
-            let showAllSelector = this.shadowRoot.querySelectorAll('.show-all')[0]
-            if (showAllSelector) showAllSelector.classList.add('hidden')
-            let externalDataTable = this.shadowRoot.querySelectorAll('.history-external-data')[0]
-            if (externalDataTable) externalDataTable.classList.add('hidden')
+            if (this.shadowElement('.show-all')) this.shadowElement('.show-all').classList.add('hidden')
+            if (this.shadowElement('.history-external-data')) this.shadowElement('.history-external-data').classList.add('hidden')
         }
     }
 
     toggleShowAllTableElements() {
         this.showAllTableElements = !this.showAllTableElements
-
-        let showAllSelector = this.shadowRoot.querySelectorAll('.show-all')[0]
-        if (showAllSelector) {
-            showAllSelector.innerHTML = this.showAllTableElements ? 'Hide' : `Show All (${this.tableData.length})`
-        }
-
+        if (this.shadowElement('.show-all')) this.shadowElement('.show-all').innerHTML = this.showAllTableElements ? 'Hide' : `Show All (${this.tableData.length})`
         this.filterTableElements()
+    }
+
+    shadowElement(className) {
+        return className && this.shadowRoot.querySelectorAll(className)[0] ? this.shadowRoot.querySelectorAll(className)[0] : ''
     }
 }
 
 async function getData(url = '', postProcess = 'text') {
-    const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        referrerPolicy: 'no-referrer'
-    })
-    return response[postProcess]()
+    if (!url) {
+        throw 'no url to fetch. Must send url to checkData().'
+    } else {
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            referrerPolicy: 'no-referrer'
+        })
+        return response[postProcess]()
+    }
 }
 
 function prettyDate(date) {
