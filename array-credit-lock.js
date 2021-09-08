@@ -18,9 +18,9 @@ class ArrayCreditLock extends HTMLElement {
             getData('array-credit-lock.html')]
         ).then((values) => {
             if (values[0]) this.injectDependencies(values[0])
-            if (values[2]) this.appendMainTemplate(values[2])
             if (values[1]) this.tableData = values[1]
-            this.appendTableElements()
+            if (values[2]) this.initializeMainTemplate(values[2])
+            this.initializeTable()
         })
             .catch(handleError)
     }
@@ -35,10 +35,11 @@ class ArrayCreditLock extends HTMLElement {
         })
     }
 
-    appendMainTemplate(html) {
+    initializeMainTemplate(html) {
         let template = document.createElement('template')
         template.innerHTML = html
         this.shadowRoot.appendChild(template.content.cloneNode(true))
+        // add show hide history toggle event
         if (this.shadowElement('.history-title')) {
             this.shadowElement('.history-title').onclick = e => {
                 this.toggleShowHistoryTable()
@@ -51,6 +52,7 @@ class ArrayCreditLock extends HTMLElement {
         let toggleCollapsibleElement = this.shadowRoot.querySelectorAll('.collapsible__toggle-handler') || []
         let toggleCollapsibleIconElement = this.shadowRoot.querySelectorAll('.collapsible__open-close-icon') || []
         let elementList = [...toggleCollapsibleElement, ...toggleCollapsibleIconElement]
+        // add collapsible events to each toggle title and icon element
         if (elementList && elementList.length) elementList.forEach(element => {
             element.onclick = e => {
                 let collapsible = element.closest('.collapsible')
@@ -59,8 +61,9 @@ class ArrayCreditLock extends HTMLElement {
         })
     }
 
-    appendTableElements() {
+    initializeTable() {
         this.updateTableElements()
+        // add show all toggle event
         if (this.shadowElement('.show-all')) {
             this.shadowElement('.show-all').onclick = e => {
                 this.toggleShowAllTableElements()
@@ -69,6 +72,7 @@ class ArrayCreditLock extends HTMLElement {
     }
 
     updateTableElements() {
+        if (!this.tableData || !this.tableData.length) handleError('no data for table.')
         // remove all table elements
         if (this.shadowElement('.history-external-data')) {
             while (this.shadowElement('.history-external-data').firstChild) {
@@ -152,7 +156,7 @@ function prettyDate(date) {
 }
 
 function handleError(error) {
-    console.error('There has been a problem with your fetch operation:', error)
+    console.error('There has been a problem with your app: ', error)
 }
 
 customElements.define('array-credit-lock', ArrayCreditLock)
