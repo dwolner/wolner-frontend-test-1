@@ -11,7 +11,7 @@ class ArrayCreditLock extends HTMLElement {
         }
         // get all necessary data
         Promise.all([
-            getData('injections.json', 'json'),
+            getData('/data/injections.json', 'json'),
             getData(this.tableDataUrl, 'json'),
             getData('array-credit-lock.html')]
         ).then((values) => {
